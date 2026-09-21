@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "bm25_retrieval_baseline_v1",
+  "implementation_version": "0.2.0",
+  "benchmark_id": "multidoc2dial_retrieval_benchmark_v1_e8baf6e2ad",
+  "development_splits": [
+    "train",
+    "validation"
+  ],
+  "locked_splits": [
+    "test"
+  ],
+  "strategies": [
+    "fixed_v1",
+    "structure_aware_v1",
+    "section_preserving_v1",
+    "hierarchical_v1"
+  ],
+  "analyzer": {
+    "name": "unicode_word_v1",
+    "unicode_normalization": "NFKC",
+    "casefold": true,
+    "token_pattern": "[a-z0-9]+",
+    "remove_stopwords": false,
+    "stemming": false,
+    "document_field": "embedding_text",
+    "query_field": "query.text",
+    "unique_query_terms": true
+  },
+  "bm25": {
+    "idf_variant": "robertson_positive",
+    "default": {
+      "k1": 1.2,
+      "b": 0.75
+    },
+    "tuning": {
+      "enabled": true,
+      "split": "validation",
+      "cohort": "direct_user_response",
+      "objective": "evidence_recall@5",
+      "tie_breakers": [
+        "mrr@10",
+        "all_evidence_hit@5",
+        "lower_k1",
+        "lower_b"
+      ],
+      "k1_values": [
+        0.9,
+        1.2,
+        1.5,
+        1.8,
+        2.1,
+        2.4,
+        3.0,
+        4.0
+      ],
+      "b_values": [
+        0.25,
+        0.5,
+        0.75,
+        1.0
+      ]
+    }
+  },
+  "evaluation": {
+    "top_k_values": [
+      1,
+      3,
+      5,
+      10
+    ],
+    "primary_cohort": "direct_user_response",
+    "primary_metric": "evidence_recall@5",
+    "report_slices": [
+      "all_examples",
+      "official_primary",
+      "overlap_free_primary",
+      "short_query_primary",
+      "non_short_query_primary",
+      "agent_continuation"
+    ],
+    "batch_size": 256,
+    "persist_default_validation_rankings": true,
+    "persist_tuned_validation_rankings": true
+  },
+  "performance": {
+    "latency_sample_size": 500,
+    "latency_warmup_queries": 20,
+    "random_seed": 42
+  }
+}

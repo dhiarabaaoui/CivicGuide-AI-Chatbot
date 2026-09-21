@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fb">
+  <meta name="description" content="CivicGuide, assistant conversationnel fondé sur des sources publiques vérifiables.">
+  <title>CivicGuide AI — Assistant administratif</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <div>
+          <strong>CivicGuide AI</strong>
+          <span>Assistant administratif</span>
+        </div>
+      </div>
+
+      <button class="new-chat" id="newChat" type="button">
+        <span class="new-chat-icon" aria-hidden="true">＋</span>
+        <span>Nouvelle conversation</span>
+        <kbd>Ctrl K</kbd>
+      </button>
+
+      <nav class="domain-nav" aria-label="Domaines documentaires">
+        <p class="nav-label">Domaines</p>
+        <button class="domain-item active" type="button" data-domain="">
+          <span class="domain-icon icon-all" aria-hidden="true">✦</span>
+          Tous les domaines
+        </button>
+        <button class="domain-item" type="button" data-domain="dmv">
+          <span class="domain-icon icon-dmv" aria-hidden="true">D</span>
+          DMV
+        </button>
+        <button class="domain-item" type="button" data-domain="ssa">
+          <span class="domain-icon icon-ssa" aria-hidden="true">S</span>
+          Social Security
+        </button>
+        <button class="domain-item" type="button" data-domain="va">
+          <span class="domain-icon icon-va" aria-hidden="true">V</span>
+          Veterans Affairs
+        </button>
+        <button class="domain-item" type="button" data-domain="studentaid">
+          <span class="domain-icon icon-aid" aria-hidden="true">A</span>
+          Student Aid
+        </button>
+      </nav>
+
+      <section class="conversation-history" aria-labelledby="historyTitle">
+        <div class="history-heading">
+          <p class="nav-label" id="historyTitle">Historique</p>
+          <span>Sur cet appareil</span>
+        </div>
+        <div class="history-list" id="historyList">
+          <p class="history-empty">Vos conversations récentes apparaîtront ici.</p>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="topbar-context">
+          <button class="icon-button menu-button" id="menuButton" type="button" aria-label="Ouvrir le menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div>
+            <strong id="domainLabel">Assistant général</strong>
+            <span>Informations administratives vérifiables</span>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="secondary-button" id="demoButton" type="button">Voir une démo</button>
+          <button class="sources-button" id="openSources" type="button" aria-controls="evidencePanel" aria-expanded="false">
+            <span aria-hidden="true">⌘</span>
+            Sources
+            <span class="source-badge" id="sourceCount">0</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="chat-stage" aria-live="polite">
+        <div class="conversation" id="conversation">
+          <section class="welcome" id="welcome">
+            <div class="assistant-orb" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <h1>Comment puis-je vous aider&nbsp;?</h1>
+            <p>Posez une question sur les démarches publiques américaines. La réponse sera reliée aux passages qui la justifient.</p>
+
+            <div class="suggestions" aria-label="Questions suggérées">
+              <button class="suggestion-card" type="button" data-question="Quels documents faut-il pour obtenir une REAL ID en Californie ?">
+                <span class="suggestion-symbol symbol-blue" aria-hidden="true">D</span>
+                <span>
+                  <strong>Obtenir une REAL ID</strong>
+                  <small>Documents et conditions en Californie</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+              </button>
+              <button class="suggestion-card" type="button" data-question="Comment remplacer une carte Social Security perdue ?">
+                <span class="suggestion-symbol symbol-teal" aria-hidden="true">S</span>
+                <span>
+                  <strong>Remplacer une carte SSA</strong>
+                  <small>Étapes après une perte</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+              </button>
+              <button class="suggestion-card" type="button" data-question="Comment demander une aide fédérale pour les études ?">
+                <span class="suggestion-symbol symbol-purple" aria-hidden="true">A</span>
+                <span>
+                  <strong>Financer ses études</strong>
+                  <small>Aide fédérale et demande FAFSA</small>
+                </span>
+                <span class="arrow" aria-hidden="true">→</span>
+              </button>
+            </div>
+          </section>
+
+          <div class="messages" id="messages"></div>
+        </div>
+
+        <div class="pipeline-progress" id="pipelineProgress" hidden>
+          <span class="pipeline-dot active"></span>
+          <span class="pipeline-dot"></span>
+          <span class="pipeline-dot"></span>
+          <span class="pipeline-dot"></span>
+          <span id="pipelineLabel">Recherche des passages pertinents…</span>
+        </div>
+      </section>
+
+      <footer class="composer-zone">
+        <form class="composer" id="composer">
+          <label class="sr-only" for="messageInput">Votre question</label>
+          <textarea id="messageInput" rows="1" placeholder="Posez votre question…" autocomplete="off"></textarea>
+          <button class="send-button" id="sendButton" type="submit" aria-label="Envoyer la question" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 19V5m0 0-6 6m6-6 6 6"></path>
+            </svg>
+          </button>
+        </form>
+        <p>Les réponses peuvent comporter des erreurs. Vérifiez les sources officielles citées.</p>
+      </footer>
+    </main>
+  </div>
+
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <aside class="evidence-drawer" id="evidencePanel" aria-label="Sources utilisées" aria-hidden="true">
+    <header class="drawer-header">
+      <div>
+        <span class="eyebrow">Traçabilité</span>
+        <h2>Sources utilisées <span id="drawerCount">0</span></h2>
+      </div>
+      <button class="icon-button" id="closeEvidence" type="button" aria-label="Fermer les sources">×</button>
+    </header>
+    <div class="drawer-intro">
+      <span class="shield-icon" aria-hidden="true">✓</span>
+      <p>Chaque numéro dans la réponse renvoie au passage exact utilisé par le système.</p>
+    </div>
+    <div class="source-list" id="sourceList">
+      <div class="empty-sources">
+        <div aria-hidden="true">⌘</div>
+        <strong>Aucune source pour le moment</strong>
+        <p>Posez une question pour afficher les documents retrouvés.</p>
+      </div>
+    </div>
+    <footer class="drawer-footer">
+      <span>Contrôle qualité expérimental</span>
+      <p>La présence d'une source ne remplace pas la vérification sur le site officiel.</p>
+    </footer>
+  </aside>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>

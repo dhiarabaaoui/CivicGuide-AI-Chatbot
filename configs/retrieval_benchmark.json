@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_name": "multidoc2dial_retrieval_benchmark_v1",
+  "implementation_version": "0.2.0",
+  "dataset_version": "multidoc2dial_v1",
+  "chunking_experiment_id": "chunking_candidates_v0_b1ac9cc451",
+  "strategies": [
+    "fixed_v1",
+    "structure_aware_v1",
+    "section_preserving_v1",
+    "hierarchical_v1"
+  ],
+  "splits": [
+    "train",
+    "validation",
+    "test"
+  ],
+  "target_role": "agent",
+  "primary_cohort": "direct_user_response",
+  "include_agent_continuations": true,
+  "require_resolved_references": true,
+  "relevance": {
+    "retrieval_level_for_hierarchical": "child",
+    "relevant_if": "chunk_overlaps_at_least_one_gold_span",
+    "retain_full_containment_mapping": true
+  },
+  "context": {
+    "store_full_history_before_query": true,
+    "store_intermediate_turns_before_target": true
+  },
+  "diagnostics": {
+    "short_query_max_words": 5,
+    "audit_cross_split_exact_duplicates": true,
+    "annotate_cross_split_text_overlap": true
+  }
+}

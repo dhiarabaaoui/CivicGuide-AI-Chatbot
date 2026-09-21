@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "rag_candidate_structural_v1_62383ac6c4ff",
+  "artifacts": {
+    "chunks": "runtime_artifacts/chunks.jsonl",
+    "documents": "runtime_artifacts/documents.jsonl",
+    "dense_vectors": "runtime_artifacts/chunk_vectors.npy",
+    "dense_index": "runtime_artifacts/chunk_index.json",
+    "pipeline_config": "configs/mandatory_claim_pipeline.json",
+    "planner_prompt": "prompts/mandatory_claim_planner_v5.txt",
+    "reviewer_prompt": "prompts/mandatory_claim_plan_reviewer_v3.txt",
+    "realizer_prompt": "prompts/mandatory_claim_realizer_v1.txt",
+    "response_cache": "runtime_cache/responses.sqlite3",
+    "request_log": "runtime_logs/requests.jsonl"
+  },
+  "retrieval": {
+    "strategy": "section_preserving_v1",
+    "bm25_k1": 3.0,
+    "bm25_b": 1.0,
+    "candidate_depth": 100,
+    "rank_constant": 10,
+    "bm25_weight": 0.5,
+    "dense_weight": 0.5,
+    "returned_chunks": 8,
+    "maximum_evidence_spans": 12,
+    "minimum_dense_similarity": 0.2,
+    "embedding_model": "text-embedding-3-small"
+  },
+  "generation": {
+    "enabled": true,
+    "maximum_plan_repair_attempts": 1,
+    "maximum_realizer_repair_attempts": 1,
+    "per_request_maximum_cost_usd": 0.03
+  },
+  "safeguards": {
+    "maximum_history_turns": 12,
+    "maximum_message_characters": 4000,
+    "show_experimental_quality_warning": true,
+    "experimental_quality_warning": "Qualité expérimentale : vérifiez les informations importantes dans les sources citées.",
+    "allow_abstention": true,
+    "log_requests_without_secrets": true
+  }
+}

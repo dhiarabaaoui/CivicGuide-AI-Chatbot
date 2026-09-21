@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "features": {
+    "fragment_complete_planner_v6": {
+      "enabled": false,
+      "mode": "shadow",
+      "candidate_id": "rag_candidate_structural_v1_62383ac6c4ff",
+      "activation_requirement": "pass_clean_document_disjoint_multidomain_v1"
+    }
+  }
+}

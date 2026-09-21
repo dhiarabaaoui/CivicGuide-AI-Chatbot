@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0.0",
+  "decision_id": "owner_production_override_20260911",
+  "decision_date": "2026-09-11",
+  "candidate_id": "rag_candidate_structural_v1_62383ac6c4ff",
+  "production_authorized": true,
+  "authorization_basis": "explicit_project_owner_risk_acceptance",
+  "quality_gate_override": true,
+  "human_external_validation": {
+    "completed": false,
+    "passed": null,
+    "metrics": null
+  },
+  "evidence_status": "NOT_HUMAN_VALIDATED",
+  "release_status": "PRODUCTION_AUTHORIZED_BY_OWNER_WITH_ACCEPTED_RISK",
+  "required_disclosure": "Production use was authorized by the project owner without completed independent human validation.",
+  "known_automatic_evidence": {
+    "closed_reused_32_case_overall_pass_rate": 0.8438,
+    "automatic_internal_80_case_overall_pass_rate": 0.5625,
+    "automatic_internal_80_case_action_accuracy": 0.7,
+    "external_controlled_generation_ai_scoring_20260913": {
+      "evaluator_id": "codex_ai_evaluator_01",
+      "human_validation": false,
+      "overall_pass_rate": 0.3375,
+      "action_accuracy": 0.9625,
+      "contract_valid_rate": 0.9625,
+      "citation_valid_rate": 0.9875,
+      "faithfulness_pass_rate": 0.9875,
+      "correctness_acceptable_rate": 0.675,
+      "completeness_pass_rate": 0.3375,
+      "production_quality_targets_passed": false
+    }
+  },
+  "latest_quality_risk_level": "high",
+  "latest_quality_evidence_verdict": "AUTOMATED_SCORING_FAILS_PRODUCTION_TARGETS",
+  "external_scoring_stage": {
+    "status": "STAGE_CLOSED_BY_OWNER_OVERRIDE",
+    "closed_at": "2026-09-13",
+    "blocking_further_product_work": false,
+    "quality_targets_passed": false,
+    "risk_accepted_by_project_owner": true,
+    "decision_record": "reports/generated/multidoc2dial_v1/project_decisions/external_scoring_stage_override_20260913.md"
+  },
+  "mandatory_runtime_safeguards": [
+    "show_official_sources_and_citations",
+    "allow_abstention_when_evidence_is_insufficient",
+    "log_failures_and_user_feedback",
+    "display_experimental_quality_warning",
+    "provide_rollback_to_frozen_candidate"
+  ],
+  "prohibited_claims": [
+    "independent_human_validation_completed",
+    "independent_human_validation_passed",
+    "fabricated_human_metrics"
+  ]
+}

@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+openai
+numpy
+python-dotenv
+jsonschema
+tiktoken

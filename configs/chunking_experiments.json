@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "chunking_candidates_v0",
+  "implementation_version": "0.4.0",
+  "tokenizer": {
+    "encoding": "cl100k_base"
+  },
+  "deduplication": {
+    "enabled": true,
+    "key": "content_hash",
+    "preserve_document_aliases": true
+  },
+  "strategies": {
+    "fixed_v1": {
+      "kind": "fixed",
+      "max_tokens": 256,
+      "overlap_tokens": 50,
+      "prepend_document_title": false
+    },
+    "structure_aware_v1": {
+      "kind": "structure_aware",
+      "target_tokens": 220,
+      "max_tokens": 300,
+      "min_tokens": 60,
+      "overlap_tokens": 40,
+      "max_overlap_tokens": 80,
+      "prepend_document_title": true,
+      "prepend_section_path": true,
+      "preserve_span_boundaries": true
+    },
+    "section_preserving_v1": {
+      "kind": "section_preserving",
+      "target_tokens": 600,
+      "max_tokens": 800,
+      "min_tokens": 100,
+      "oversized_section_target_tokens": 600,
+      "overlap_tokens": 0,
+      "prepend_document_title": true,
+      "prepend_section_path": true,
+      "preserve_whole_sections": true,
+      "preserve_span_boundaries_when_split": true
+    },
+    "hierarchical_v1": {
+      "kind": "hierarchical",
+      "child": {
+        "target_tokens": 220,
+        "max_tokens": 300,
+        "min_tokens": 60,
+        "overlap_tokens": 40,
+        "max_overlap_tokens": 80
+      },
+      "parent": {
+        "target_tokens": 800,
+        "max_tokens": 1200,
+        "min_tokens": 300
+      },
+      "prepend_document_title": true,
+      "prepend_section_path": true,
+      "preserve_span_boundaries": true
+    }
+  }
+}

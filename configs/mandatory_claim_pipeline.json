@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "mandatory_claim_pipeline_v6_fragment_complete",
+  "generation_contract_experiment_id": "planned_generation_contract_v2_semantic_control_2f9f93633e",
+  "benchmark_experiment_id": "multidoc2dial_retrieval_benchmark_v1_e8baf6e2ad",
+  "baseline_evaluation_experiment_id": "automated_end_to_end_evaluation_v4_fresh_confirmation_30cd102ccd",
+  "evaluation_split": "validation",
+  "cohort": "all_generated_baseline_cases",
+  "development_candidate_experiment_id": "mandatory_claim_pipeline_v4_reviewed_coverage_full_39d45ad374",
+  "targeted_comparison_experiment_id": "mandatory_claim_pipeline_v5_semantic_direct_outcome_reserve_f9932692c1",
+  "fresh_confirmation": {
+    "sampling_seed": 20260830,
+    "generated_per_domain": {
+      "dmv": {"answer": 6, "ask_followup": 0},
+      "ssa": {"answer": 4, "ask_followup": 2},
+      "va": {"answer": 6, "ask_followup": 0},
+      "studentaid": {"answer": 5, "ask_followup": 1}
+    },
+    "abstain_per_domain": {
+      "dmv": 3,
+      "ssa": 2,
+      "va": 0,
+      "studentaid": 3
+    },
+    "maximum_total_overall_regression": 0.10,
+    "maximum_generated_faithfulness_regression": 0.05
+  },
+  "locked_splits": ["test"],
+  "planner_prompt_path": "prompts/mandatory_claim_planner_v5.txt",
+  "realizer_prompt_path": "prompts/mandatory_claim_realizer_v1.txt",
+  "reviewer_prompt_path": "prompts/mandatory_claim_plan_reviewer_v3.txt",
+  "maximum_mandatory_claims": 5,
+  "maximum_plan_repair_attempts": 2,
+  "maximum_repair_attempts": 1,
+  "structural_evidence_guard": {
+    "enabled": true,
+    "policy": "same_document_same_section_contiguous_source_order_only"
+  },
+  "runtime_checklist_continuation_guard": {
+    "enabled": true,
+    "policy": "high_confidence_positive_reply_with_unvisited_same_section_checklist_item"
+  },
+  "adaptive_output_limits": {
+    "enabled": true,
+    "realizer_base_tokens": 192,
+    "realizer_tokens_per_claim": 128,
+    "judge_max_output_tokens": 224
+  },
+  "planner": {
+    "model": "gpt-5.4-mini-2026-03-17",
+    "reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 640,
+    "expected_output_tokens": 260,
+    "store": false
+  },
+  "reviewer": {
+    "model": "gpt-5.4-mini-2026-03-17",
+    "reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 640,
+    "expected_output_tokens": 240,
+    "store": false
+  },
+  "realizer": {
+    "model": "gpt-5.4-mini-2026-03-17",
+    "reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 768,
+    "expected_output_tokens": 300,
+    "store": false
+  },
+  "judge": {
+    "model": "gpt-5.4-mini-2026-03-17",
+    "reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 512,
+    "expected_output_tokens": 180,
+    "store": false
+  },
+  "api": {
+    "api_key_environment_variable": "OPENAI_API_KEY",
+    "dotenv_path": ".env",
+    "request_timeout_seconds": 180,
+    "max_retries": 4,
+    "cache_sqlite_filename": "mandatory_claim_pipeline.sqlite3"
+  },
+  "pricing": {
+    "input_usd_per_million_tokens": 0.75,
+    "cached_input_usd_per_million_tokens": 0.075,
+    "output_usd_per_million_tokens": 4.5,
+    "maximum_authorized_cost_usd": 0.5
+  },
+  "minimum_acceptable_correctness": 3,
+  "acceptance_gates": {
+    "minimum_action_accuracy": 0.85,
+    "minimum_contract_valid_rate": 1.0,
+    "minimum_citation_valid_rate": 0.95,
+    "minimum_faithfulness_pass_rate": 0.9,
+    "minimum_correctness_acceptable_rate": 0.8,
+    "minimum_completeness_pass_rate": 0.8,
+    "minimum_overall_pass_rate": 0.75,
+    "maximum_hallucination_rate": 0.1,
+    "maximum_mean_planned_claims": 3.5,
+    "minimum_delta_overall_pass_rate": 0.1,
+    "minimum_delta_completeness_pass_rate": 0.15,
+    "maximum_faithfulness_regression": 0.0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_id": "rag_candidate_structural_v1_62383ac6c4ff",
+  "created_at_utc": "2026-09-20T21:12:15.187822+00:00",
+  "artifacts": {
+    "chunks": {
+      "source": "data/processed/multidoc2dial_v1/chunking_experiments/chunking_candidates_v0_b1ac9cc451/section_preserving_v1/chunks.jsonl",
+      "target": "runtime_artifacts/chunks.jsonl",
+      "size_bytes": 16675811,
+      "sha256": "147056e0d50bcb485d9d0111565f612995cf441427ba37c8dda88abfb877397a"
+    },
+    "documents": {
+      "source": "data/processed/multidoc2dial_v1/documents.jsonl",
+      "target": "runtime_artifacts/documents.jsonl",
+      "size_bytes": 15856585,
+      "sha256": "21f704ddab631dfc99e59eab88887bb020a670f046f81aba7ac0a167afebad6b"
+    },
+    "dense_vectors": {
+      "source": "data/processed/multidoc2dial_v1/dense_retrieval_experiments/openai_dense_retrieval_v1_3b9e048ba8/vectors/section_preserving_v1/chunk_vectors.npy",
+      "target": "runtime_artifacts/chunk_vectors.npy",
+      "size_bytes": 7821440,
+      "sha256": "3f46a3bf8de2ac376520febe7129f4baa6d3608d29205e94458300d79f787914"
+    },
+    "dense_index": {
+      "source": "data/processed/multidoc2dial_v1/dense_retrieval_experiments/openai_dense_retrieval_v1_3b9e048ba8/vectors/section_preserving_v1/chunk_index.json",
+      "target": "runtime_artifacts/chunk_index.json",
+      "size_bytes": 1940802,
+      "sha256": "744f83055d3fff687620303c7a6a5962e1bee33b6e40f5a367646b569ad9df90"
+    }
+  },
+  "total_bytes": 42294638,
+  "total_megabytes": 40.335
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "context_builder_v1",
+  "implementation_version": "0.1.0",
+  "dataset_version": "multidoc2dial_v1",
+  "benchmark_id": "multidoc2dial_retrieval_benchmark_v1_e8baf6e2ad",
+  "chunking_experiment_id": "chunking_candidates_v0_b1ac9cc451",
+  "chunking_strategy": "section_preserving_v1",
+  "reranking_experiment_id": "cross_encoder_reranking_l6_v1_2e66c8170f",
+  "evaluation_split": "validation",
+  "locked_splits": [
+    "test"
+  ],
+  "cohort": "direct_user_response",
+  "candidate_depth": 50,
+  "tokenizer": {
+    "encoding": "cl100k_base"
+  },
+  "rendering": {
+    "version": "citation_context_v1",
+    "source_template": "[{citation_id}]\nDomain: {domain}\nDocument: {document_title}\nChunk ID: {chunk_id}\n{content}",
+    "separator": "\n\n---\n\n",
+    "citation_prefix": "S"
+  },
+  "policy_grid": {
+    "seed_top_k_values": [
+      3,
+      5,
+      8,
+      10,
+      12,
+      15,
+      20
+    ],
+    "token_budget_values": [
+      2000,
+      3000,
+      4000,
+      5000,
+      6000,
+      6500,
+      7000,
+      8000
+    ],
+    "modes": [
+      "ranked_exact_dedupe",
+      "ranked_near_dedupe",
+      "ranked_exact_dedupe_with_neighbors"
+    ],
+    "near_duplicate_jaccard_threshold": 0.92,
+    "neighbor_offsets": [
+      -1,
+      1
+    ],
+    "maximum_context_chunks": 20,
+    "continue_after_budget_miss": true
+  },
+  "selection": {
+    "candidate_ceiling_depth": 50,
+    "minimum_candidate_ceiling_retention": 0.86,
+    "maximum_mean_context_tokens": 5000,
+    "maximum_context_tokens": 5000,
+    "maximum_mean_context_chunks": 10,
+    "objective": "minimum_mean_tokens_meeting_evidence_target",
+    "tie_breakers": [
+      "higher_span_recall",
+      "higher_all_spans_covered_rate",
+      "lower_mean_chunks",
+      "no_neighbor_expansion",
+      "exact_before_near_dedupe"
+    ]
+  },
+  "evaluation": {
+    "primary_metric": "gold_span_recall",
+    "report_slices": [
+      "all_primary",
+      "rewrite_gated",
+      "rewrite_not_gated",
+      "short_queries",
+      "non_short_queries",
+      "overlap_free"
+    ],
+    "sample_contexts": 12,
+    "random_seed": 42
+  },
+  "quality_targets": {
+    "minimum_selected_gold_span_recall": 0.81,
+    "minimum_selected_ceiling_retention": 0.86,
+    "maximum_selected_budget_violation_count": 0,
+    "maximum_duplicate_chunk_id_count": 0,
+    "maximum_invalid_citation_count": 0,
+    "maximum_test_records_loaded": 0
+  }
+}
