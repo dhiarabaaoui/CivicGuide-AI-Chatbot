@@ -54,13 +54,35 @@ vercel --prod
 1. `GET /` doit afficher CivicGuide.
 2. `GET /health` doit retourner `status: ready`,
    `generation_available: true`, 1 273 chunks et des vecteurs `[1273, 1536]`.
-3. Le bouton de démonstration doit fonctionner sans appel OpenAI.
-4. Une vraie question doit produire une réponse avec citations.
-5. Une question posée dans le mauvais domaine doit être bloquée sans coût.
+3. `GET /health/live` doit retourner `status: alive` et `/health/ready` doit
+   confirmer les artefacts sans appel payant.
+4. Le bouton de démonstration doit fonctionner sans appel OpenAI.
+5. Une vraie question doit produire une réponse avec citations.
+6. Une question posée dans le mauvais domaine doit être bloquée sans coût.
+7. Chaque réponse HTTP doit contenir un en-tête `X-Request-ID`.
 
 ## Limites et protection des coûts
 
 Vercel Hobby couvre l’hébergement dans ses quotas, mais les appels OpenAI restent
-payants. Le runtime limite chaque requête générée à 0,03 USD. Pour une URL
-publique, conserver ce plafond, surveiller l’usage OpenAI et configurer une règle
-de limitation sur `/v1/chat` dans le pare-feu Vercel.
+payants. Le runtime limite chaque requête générée à 0,03 USD. La règle Vercel
+`Protect paid AI endpoints` est publiée et limite `/v1/chat` et `/v1/retrieve`
+à 10 requêtes par adresse IP sur une fenêtre fixe de 60 secondes. Elle a été
+testée sans coût le 21 septembre 2026 : 10 requêtes invalides ont atteint l’API
+avec le statut 422, puis les requêtes 11 et 12 ont été bloquées en 429 par le
+pare-feu. Conserver cette règle et surveiller aussi l’usage OpenAI, car une
+limite par minute ne constitue pas un budget mensuel.
+
+## CI/CD et exploitation
+
+La pipeline GitHub vérifie le lint, les 59 tests, les hashes des artefacts,
+les vulnérabilités Python et la construction Docker avant tout déploiement.
+Les tâches de CD nécessitent les secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` et
+`VERCEL_PROJECT_ID`, ainsi que la variable `ENABLE_VERCEL_DEPLOYMENTS=true`.
+Après un déploiement Production réussi, la pipeline déplace explicitement
+`civicguide-ai-chatbot.vercel.app` vers le nouvel artefact immuable puis teste
+à nouveau `/health/ready` sur cette URL publique.
+
+Les journaux applicatifs sont des événements JSON sans question ni réponse.
+Le workflow `Production uptime` contrôle `/health/ready` deux fois par heure.
+La procédure d'incident, le test de charge et le rollback sont décrits dans
+`OPERATIONS.md`.

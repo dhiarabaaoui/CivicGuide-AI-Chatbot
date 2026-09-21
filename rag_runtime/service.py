@@ -6,12 +6,12 @@ import threading
 import unicodedata
 import uuid
 from datetime import datetime, timezone
-from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 from .generation import GenerationUnavailable, OpenAIGenerator
+from .observability import emit_event
 from .retrieval import EvidenceIndex, HybridRetriever, RetrievalHit, tokenize
 from .settings import RuntimeSettings, load_settings
 
@@ -276,9 +276,30 @@ class RAGRuntime:
             return
         path = self.settings.path("request_log")
         path.parent.mkdir(parents=True, exist_ok=True)
-        safe = {key: value for key, value in row.items() if key not in {"prepared", "raw_response"}}
+        retrieval = row.get("retrieval") or {}
+        safe = {
+            "created_at": row.get("created_at"),
+            "trace_id": row.get("trace_id"),
+            "status": row.get("status"),
+            "suggested_domain": row.get("suggested_domain"),
+            "cost_usd": round(float(row.get("cost_usd", 0.0) or 0.0), 8),
+            "citation_count": len(row.get("citations") or []),
+            "cache_hits": row.get("cache_hits") or [],
+            "validation_error_count": len(row.get("validation_errors") or []),
+            "retrieval": {
+                key: retrieval.get(key)
+                for key in (
+                    "bm25_top_score",
+                    "dense_top_similarity",
+                    "candidate_count",
+                    "returned_count",
+                )
+                if key in retrieval
+            },
+        }
         with self._log_lock, path.open("a", encoding="utf-8") as stream:
             stream.write(json.dumps(safe, ensure_ascii=False) + "\n")
+        emit_event("rag_response", **safe)
 
     def chat(
         self,

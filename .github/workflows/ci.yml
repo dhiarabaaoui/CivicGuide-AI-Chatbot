@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -14,7 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  quality:
+    name: Quality and tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -29,8 +30,98 @@ jobs:
           cache: pip
 
       - name: Install runtime dependencies
-        run: python -m pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip==26.2.1
+          python -m pip install -r requirements.txt
+
+      - name: Install development tools
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Lint production code
+        run: ruff check app.py apps/rag_api.py rag_runtime tests scripts/load_test.py scripts/verify_runtime_artifacts.py
+
+      - name: Check frontend syntax
+        run: node --check frontend/app.js
+
+      - name: Verify frozen runtime artifacts
+        run: python scripts/verify_runtime_artifacts.py
 
       - name: Run automated tests
         run: python -m unittest discover -s tests -p "test_*.py" -q
 
+      - name: Audit Python dependencies
+        run: python -m pip_audit -r requirements.txt --strict
+
+  container:
+    name: Container build and smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: quality
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build production image
+        run: docker build --tag civicguide-ai:ci .
+
+      - name: Smoke-test container
+        shell: bash
+        run: |
+          set -euo pipefail
+          container_id=$(docker run --detach --publish 8000:8000 civicguide-ai:ci)
+          trap 'docker logs "$container_id"; docker rm --force "$container_id"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health/ready --output health.json; then
+              python -c 'import json; value=json.load(open("health.json")); assert value["status"] == "ready" and value["chunks"] == 1273'
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+  deploy-preview:
+    name: Deploy preview
+    if: github.event_name == 'pull_request' && vars.ENABLE_VERCEL_DEPLOYMENTS == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [quality, container]
+    environment: preview
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install --global vercel@58.9.4
+      - run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy preview and smoke-test it
+        shell: bash
+        run: |
+          set -euo pipefail
+          deployment_url=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          curl --fail --retry 3 --retry-all-errors --max-time 30 "$deployment_url/health/ready"
+
+  deploy-production:
+    name: Deploy production
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.ENABLE_VERCEL_DEPLOYMENTS == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [quality, container]
+    environment: production
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install --global vercel@58.9.4
+      - run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy production and smoke-test it
+        shell: bash
+        run: |
+          set -euo pipefail
+          deployment_url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          curl --fail --retry 3 --retry-all-errors --max-time 30 "$deployment_url/health/ready"
+          vercel alias set "$deployment_url" civicguide-ai-chatbot.vercel.app --token=${{ secrets.VERCEL_TOKEN }}
+          curl --fail --retry 3 --retry-all-errors --max-time 30 https://civicguide-ai-chatbot.vercel.app/health/ready

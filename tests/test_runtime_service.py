@@ -1,12 +1,41 @@
 from __future__ import annotations
 
+import json
+import tempfile
+import threading
 import unittest
+from pathlib import Path
 from types import SimpleNamespace
 
 from rag_runtime.service import RAGRuntime
 
 
 class RuntimeServiceTests(unittest.TestCase):
+    def test_operational_log_excludes_answer_and_evidence_content(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            log_path = Path(directory) / "requests.jsonl"
+            runtime = RAGRuntime.__new__(RAGRuntime)
+            runtime.settings = SimpleNamespace(
+                safeguards={"log_requests_without_secrets": True},
+                path=lambda key: log_path,
+            )
+            runtime._log_lock = threading.Lock()
+
+            runtime._log({
+                "created_at": "2026-09-21T00:00:00+00:00",
+                "trace_id": "trace-safe",
+                "status": "answered",
+                "answer": "A private answer that must not be logged.",
+                "citations": [{"evidence_quote": "Private evidence"}],
+                "cost_usd": 0.001,
+            })
+
+            row = json.loads(log_path.read_text(encoding="utf-8"))
+            self.assertEqual(row["trace_id"], "trace-safe")
+            self.assertEqual(row["citation_count"], 1)
+            self.assertNotIn("answer", row)
+            self.assertNotIn("Private", json.dumps(row))
+
     def test_explicit_domain_detection_supports_french_questions(self) -> None:
         self.assertEqual(
             RAGRuntime._explicit_domain(

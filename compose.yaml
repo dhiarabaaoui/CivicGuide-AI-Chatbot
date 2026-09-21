@@ -1,0 +1,20 @@
+services:
+  civicguide:
+    build:
+      context: .
+    image: civicguide-ai:local
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: container
+      LOG_LEVEL: INFO
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    restart: unless-stopped

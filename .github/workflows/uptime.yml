@@ -1,0 +1,32 @@
+name: Production uptime
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-health:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check production readiness
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --retry 3 --retry-all-errors \
+            --max-time 20 \
+            https://civicguide-ai-chatbot.vercel.app/health/ready \
+            --output health.json
+          python - <<'PY'
+          import json
+          health = json.load(open("health.json", encoding="utf-8"))
+          assert health["status"] == "ready", health
+          assert health["chunks"] == 1273, health
+          assert health["dense_vectors"] == [1273, 1536], health
+          assert health["generation_available"] is True, health
+          print(json.dumps(health, indent=2))
+          PY

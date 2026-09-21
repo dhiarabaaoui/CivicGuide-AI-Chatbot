@@ -195,15 +195,23 @@ function formatAnswer(answer, citations = []) {
   return formatted;
 }
 
-function appendMessage(role, content, citations = []) {
+function appendMessage(role, content, citations = [], traceId = "") {
   hideWelcome();
   const article = document.createElement("article");
   article.className = `message ${role}`;
+  if (traceId) article.dataset.traceId = traceId;
 
   if (role === "assistant") {
+    const feedback = traceId ? `
+      <div class="message-feedback" aria-label="Évaluer cette réponse">
+        <span>Cette réponse vous aide ?</span>
+        <button type="button" data-feedback="helpful" aria-label="Réponse utile">Oui</button>
+        <button type="button" data-feedback="not_helpful" aria-label="Réponse non utile">Non</button>
+      </div>
+    ` : "";
     article.innerHTML = `
       <div class="message-avatar" aria-hidden="true">CG</div>
-      <div class="message-body"><p>${formatAnswer(content, citations)}</p></div>
+      <div class="message-body"><p>${formatAnswer(content, citations)}</p>${feedback}</div>
     `;
   } else {
     article.innerHTML = `<div class="message-body"><p>${escapeHtml(content).replaceAll("\n", "<br>")}</p></div>`;
@@ -344,7 +352,12 @@ function restoreConversation(conversationId) {
   state.sources = Array.isArray(conversation.sources) ? conversation.sources : [];
   elements.messages.innerHTML = "";
   elements.welcome.classList.toggle("hidden", state.history.length > 0);
-  state.history.forEach((turn) => appendMessage(turn.role, turn.content, turn.citations || []));
+  state.history.forEach((turn) => appendMessage(
+    turn.role,
+    turn.content,
+    turn.citations || [],
+    turn.trace_id || "",
+  ));
   renderSources(state.sources);
   document.querySelectorAll(".domain-item").forEach((item) => {
     item.classList.toggle("active", (item.dataset.domain || "") === state.domain);
@@ -456,8 +469,9 @@ async function submitQuestion(event) {
     removeTyping();
     const answer = data.answer || "Je n’ai pas trouvé de réponse suffisamment fiable.";
     const citations = Array.isArray(data.citations) ? data.citations : [];
-    appendMessage("assistant", answer, citations);
-    state.history.push({ role: "assistant", content: answer, citations });
+    const traceId = data.trace_id || "";
+    appendMessage("assistant", answer, citations, traceId);
+    state.history.push({ role: "assistant", content: answer, citations, trace_id: traceId });
     renderSources(citations);
     persistCurrentConversation();
   } catch (error) {
@@ -472,6 +486,29 @@ async function submitQuestion(event) {
     state.busy = false;
     updateSendState();
     elements.messageInput.focus();
+  }
+}
+
+async function sendFeedback(button) {
+  const article = button.closest(".message[data-trace-id]");
+  const controls = button.closest(".message-feedback");
+  const traceId = article?.dataset.traceId || "";
+  if (!traceId || !controls || controls.dataset.sent === "true") return;
+
+  const buttons = [...controls.querySelectorAll("button")];
+  buttons.forEach((item) => { item.disabled = true; });
+  try {
+    const response = await fetch("/v1/feedback", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trace_id: traceId, rating: button.dataset.feedback }),
+    });
+    if (!response.ok) throw new Error("feedback rejected");
+    controls.dataset.sent = "true";
+    controls.innerHTML = "<span>Merci pour votre retour.</span>";
+  } catch {
+    buttons.forEach((item) => { item.disabled = false; });
+    controls.querySelector("span").textContent = "Retour non envoyé. Réessayez.";
   }
 }
 
@@ -515,6 +552,11 @@ document.querySelectorAll(".suggestion-card").forEach((button) => {
 });
 
 elements.messages.addEventListener("click", (event) => {
+  const feedback = event.target.closest("[data-feedback]");
+  if (feedback) {
+    sendFeedback(feedback);
+    return;
+  }
   const citation = event.target.closest("[data-citation]");
   if (citation) openSourceDrawer(citation.dataset.citation || "");
 });

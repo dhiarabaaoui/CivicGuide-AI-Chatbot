@@ -33,4 +33,10 @@ README.md
 SECURITY.md
 VERCEL_DEPLOYMENT.md
 docs
+Dockerfile
+.dockerignore
+compose.yaml
+OPERATIONS.md
+requirements-dev.txt
+pyproject.toml
 requirements-runtime.txt

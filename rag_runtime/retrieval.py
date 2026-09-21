@@ -7,12 +7,11 @@ import unicodedata
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Iterable
+from typing import Any, Iterable
 
 import numpy as np
 
 from .settings import RuntimeSettings
-
 
 TOKEN_PATTERN = re.compile(r"[a-z0-9]+")
 

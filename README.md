@@ -3,7 +3,7 @@
 [![Live demo](https://img.shields.io/badge/Live_demo-Vercel-5865E8?style=for-the-badge)](https://civicguide-ai-chatbot.vercel.app)
 [![CI](https://github.com/dhiarabaaoui/CivicGuide-AI-Chatbot/actions/workflows/ci.yml/badge.svg)](https://github.com/dhiarabaaoui/CivicGuide-AI-Chatbot/actions/workflows/ci.yml)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.121-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-2ea44f.svg)](LICENSE)
 
 CivicGuide AI is an end-to-end retrieval-augmented generation (RAG) assistant
@@ -35,6 +35,7 @@ experimental and should be checked against the cited official source.*
 | Grounding | Validates answer structure, evidence identifiers and inline citations before returning a response |
 | Safety | Domain-mismatch guard, insufficient-evidence abstention, cost ceiling and safe fallback |
 | Product experience | Responsive chat UI, interactive source drawer, animated demo and browser-local history |
+| Operations | Structured logs, request IDs, health probes, feedback, uptime checks and rollback runbook |
 
 ## Architecture
 
@@ -67,7 +68,10 @@ without forcing their scores onto the same scale.
 |---|---:|
 | Indexed document chunks | **1,273** |
 | Embedding dimensions | **1,536** |
-| Automated tests | **57 passed** |
+| Automated tests | **59 passed** |
+| Dependency audit | **0 known vulnerabilities** |
+| Hardened Docker smoke test | **healthy** |
+| Lexical load test | **40/40, 0 errors, p95 376 ms** |
 | Public end-to-end smoke test | **PASS** |
 | Domain answers in the smoke test | **4/4 with citations** |
 | Deterministic clarification check | **PASS** |
@@ -95,6 +99,9 @@ scripts/              preparation, evaluation, smoke-test and deployment tools
 tests/                unit, integration, frontend and deployment checks
 docs/assets/          curated visuals for GitHub
 app.py                Vercel/FastAPI entry point
+Dockerfile            non-root portable production image
+compose.yaml          hardened local container runtime
+OPERATIONS.md         monitoring, CI/CD, incident and rollback runbook
 ```
 
 Historical prompt variants, rejected rerankers and redundant experiments were
@@ -138,8 +145,11 @@ Open `http://127.0.0.1:8000`. Interactive API documentation is available at
 |---|---|---|
 | `GET /` | Serve the chat application | No |
 | `GET /health` | Validate loaded artifacts and generation availability | No |
+| `GET /health/live` | Lightweight process liveness probe | No |
+| `GET /health/ready` | Deployment readiness and artifact probe | No |
 | `POST /v1/retrieve` | Inspect retrieved chunks and evidence | Optional dense embedding |
 | `POST /v1/chat` | Run routing, retrieval, planning, generation and validation | Yes for generated answers |
+| `POST /v1/feedback` | Log a privacy-safe rating linked to a trace ID | No |
 
 Lexical retrieval can be tested at no API cost by sending `use_dense: false` to
 `POST /v1/retrieve`.
@@ -150,6 +160,15 @@ Run the complete automated suite without paid model calls:
 
 ```powershell
 python -m unittest discover -s tests -p "test_*.py" -q
+```
+
+Run the same static and supply-chain controls used by CI:
+
+```powershell
+pip install -r requirements-dev.txt
+ruff check app.py apps/rag_api.py rag_runtime tests scripts/load_test.py scripts/verify_runtime_artifacts.py
+python scripts/verify_runtime_artifacts.py
+python -m pip_audit -r requirements.txt --strict
 ```
 
 Run the real end-to-end smoke test only after explicitly accepting its maximum
@@ -163,6 +182,19 @@ python scripts/run_runtime_e2e_smoke.py `
 
 Responses are cached, and the test writes a readable and machine-readable
 report under `reports/generated/`.
+
+## Run with Docker
+
+The production image runs as a non-root user, contains no API key, exposes a
+Docker health check and uses `/tmp` for ephemeral serverless-compatible state.
+
+```powershell
+docker compose build
+docker compose up -d
+```
+
+Then open `http://127.0.0.1:8000`. A dependency-free lexical load test is
+available with `python scripts/load_test.py`; it does not call OpenAI.
 
 ## Reproduce the research path
 
@@ -191,6 +223,11 @@ Dataset provenance and citation information are in [DATA_CARD.md](DATA_CARD.md).
 - deterministic checks before any generated response is exposed;
 - serverless-safe temporary writes on Vercel;
 - honest reporting of failed quality targets and rejected variants.
+- structured privacy-safe JSON logs and request correlation IDs;
+- liveness/readiness probes, user feedback and scheduled uptime checks;
+- dependency vulnerability scanning and automated update proposals;
+- CI quality gates, container smoke tests and gated Vercel CD;
+- documented incident response and instant rollback procedure.
 
 ## Deployment
 
@@ -204,7 +241,8 @@ vercel --prod
 ```
 
 See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for the complete deployment and
-post-deployment checklist.
+post-deployment checklist. See [OPERATIONS.md](OPERATIONS.md) for CI/CD,
+monitoring, Docker, incident response and rollback operations.
 
 ## Responsible use
 
@@ -220,4 +258,3 @@ Project code is available under the [MIT License](LICENSE). MultiDoc2Dial and
 third-party source documents retain their original licenses and attribution;
 see [DATA_CARD.md](DATA_CARD.md). If you use the dataset, cite the original
 MultiDoc2Dial paper listed there.
-

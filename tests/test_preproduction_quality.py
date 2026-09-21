@@ -4,23 +4,23 @@ from pathlib import Path
 
 from scripts.build_planned_generation_contract import render_input
 from scripts.evaluate_mandatory_claim_pipeline import (
-    apply_selected_primary_evidence,
-    enrich_structural_evidence,
     apply_runtime_checklist_continuation,
+    apply_selected_primary_evidence,
     benchmark_expected_runtime_action,
+    enrich_structural_evidence,
     evidence_selector_schema,
     is_fragmentary_evidence,
+    normalized_deferral_action,
     planner_schema,
     realization_schema,
     sanitize_redundant_conflicting_claims,
     should_review_plan,
     structural_evidence_chains,
-    validate_structural_claim_coverage,
-    validate_primary_evidence_usage,
-    validate_conditional_qualifier_support,
-    normalized_deferral_action,
     validate_and_assemble,
+    validate_conditional_qualifier_support,
     validate_plan,
+    validate_primary_evidence_usage,
+    validate_structural_claim_coverage,
 )
 from scripts.run_automated_end_to_end_evaluation import normalize, validate_generation
 

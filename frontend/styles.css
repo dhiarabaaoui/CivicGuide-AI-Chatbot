@@ -679,6 +679,39 @@ kbd {
   margin-bottom: 0;
 }
 
+.message-feedback {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  margin-top: 10px;
+  color: var(--subtle);
+  font-size: 0.72rem;
+}
+
+.message-feedback button {
+  min-width: 38px;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--surface);
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.message-feedback button:hover:not(:disabled) {
+  border-color: #bfc5f6;
+  color: var(--accent-dark);
+  background: #f2f3ff;
+}
+
+.message-feedback button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .message.user .message-body {
   max-width: min(78%, 590px);
   padding: 12px 16px;
