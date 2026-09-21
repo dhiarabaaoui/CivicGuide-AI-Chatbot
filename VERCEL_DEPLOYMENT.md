@@ -3,7 +3,7 @@
 ## État
 
 - Compte/scope : `dhia14`
-- Projet : `civicguide-ai`
+- Projet : `civicguide-ai-chatbot`
 - Nom public : **CivicGuide AI**
 - URL publique : <https://civicguide-ai-chatbot.vercel.app>
 - Framework détecté : FastAPI
@@ -75,12 +75,11 @@ limite par minute ne constitue pas un budget mensuel.
 ## CI/CD et exploitation
 
 La pipeline GitHub vérifie le lint, les 59 tests, les hashes des artefacts,
-les vulnérabilités Python et la construction Docker avant tout déploiement.
-Les tâches de CD nécessitent les secrets `VERCEL_TOKEN`, `VERCEL_ORG_ID` et
-`VERCEL_PROJECT_ID`, ainsi que la variable `ENABLE_VERCEL_DEPLOYMENTS=true`.
-Après un déploiement Production réussi, la pipeline déplace explicitement
-`civicguide-ai-chatbot.vercel.app` vers le nouvel artefact immuable puis teste
-à nouveau `/health/ready` sur cette URL publique.
+les vulnérabilités Python et la construction Docker. Le dépôt GitHub est relié
+directement au projet `dhia14/civicguide-ai-chatbot` : Vercel crée les Preview
+des pull requests et publie automatiquement `main` en Production, sans stocker
+de token Vercel dans GitHub. Les changements doivent passer par une pull request
+et n’être fusionnés qu’après les deux contrôles CI verts.
 
 Les journaux applicatifs sont des événements JSON sans question ni réponse.
 Le workflow `Production uptime` contrôle `/health/ready` deux fois par heure.

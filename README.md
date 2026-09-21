@@ -226,7 +226,7 @@ Dataset provenance and citation information are in [DATA_CARD.md](DATA_CARD.md).
 - structured privacy-safe JSON logs and request correlation IDs;
 - liveness/readiness probes, user feedback and scheduled uptime checks;
 - dependency vulnerability scanning and automated update proposals;
-- CI quality gates, container smoke tests and gated Vercel CD;
+- GitHub CI quality gates, container smoke tests and native Vercel Git CD;
 - documented incident response and instant rollback procedure.
 
 ## Deployment

@@ -9,9 +9,11 @@ change the project's experimental quality status.
 - **Production:** FastAPI serverless function on Vercel.
 - **Portable runtime:** hardened, non-root Docker image with a read-only
   filesystem and writable `/tmp` only.
-- **CI/CD:** GitHub Actions runs linting, tests, artifact verification,
-  dependency auditing and a container smoke test. Preview and production
-  deployments are available after the protected Vercel secrets are configured.
+- **CI:** GitHub Actions runs linting, tests, artifact verification, dependency
+  auditing and a container smoke test.
+- **CD:** the native Vercel Git integration creates Preview deployments for
+  pull requests and a Production deployment for every push to `main`. No Vercel
+  token is copied into GitHub.
 - **Availability probe:** GitHub Actions checks production every 30 minutes.
 - **Observability:** privacy-safe JSON events are written to standard output and
   can be queried in Vercel Logs.
@@ -65,19 +67,15 @@ monthly account ceiling.
 
 ## CI/CD configuration
 
-The deployment jobs remain safely disabled until repository variable
-`ENABLE_VERCEL_DEPLOYMENTS=true` is created. Configure these GitHub environment
-secrets for both `preview` and `production`:
+The repository is connected directly to the Vercel project
+`dhia14/civicguide-ai-chatbot`. GitHub needs no deployment token: Vercel creates
+a Preview for each pull request and publishes `main` to Production. GitHub
+Actions independently verifies code quality, 59 tests, the frozen artifact
+manifest, dependency vulnerabilities and the production container.
 
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
-Pull requests then receive Preview deployments after quality and container
-jobs pass. A push to `main` produces a Production build and verifies its
-readiness endpoint, moves `civicguide-ai-chatbot.vercel.app` to that immutable
-deployment and verifies the public alias again. Protect `main` and require the
-`Quality and tests` and `Container build and smoke test` checks before merging.
+Use pull requests for changes and merge only after `Quality and tests` and
+`Container build and smoke test` pass. This keeps credentials out of GitHub and
+makes the separation between CI and CD explicit.
 
 ## Container operations
 
