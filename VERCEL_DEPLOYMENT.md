@@ -82,6 +82,7 @@ de token Vercel dans GitHub. Les changements doivent passer par une pull request
 et n’être fusionnés qu’après les deux contrôles CI verts.
 
 Les journaux applicatifs sont des événements JSON sans question ni réponse.
-Le workflow `Production uptime` contrôle `/health/ready` deux fois par heure.
+Le workflow `Production uptime` contrôle `/health/ready` après chaque CI réussie
+et deux fois par heure.
 La procédure d'incident, le test de charge et le rollback sont décrits dans
 `OPERATIONS.md`.

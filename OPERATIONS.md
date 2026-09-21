@@ -14,7 +14,8 @@ change the project's experimental quality status.
 - **CD:** the native Vercel Git integration creates Preview deployments for
   pull requests and a Production deployment for every push to `main`. No Vercel
   token is copied into GitHub.
-- **Availability probe:** GitHub Actions checks production every 30 minutes.
+- **Availability probe:** GitHub Actions checks production after every successful
+  CI run and every 30 minutes.
 - **Observability:** privacy-safe JSON events are written to standard output and
   can be queried in Vercel Logs.
 - **Abuse protection:** the published Vercel firewall rule
@@ -59,7 +60,8 @@ no-cost requests: the first 10 reached FastAPI and returned validation status
 422, while requests 11 and 12 were stopped at the edge with status 429. Keep
 this rule enabled whenever the public demo can reach paid OpenAI endpoints.
 
-GitHub marks the scheduled uptime workflow as failed when readiness is invalid.
+GitHub marks the post-CI or scheduled uptime workflow as failed when readiness
+is invalid.
 Vercel Logs should be filtered by `event`, `status_code`, `trace_id` and
 `duration_ms`. OpenAI usage must also be reviewed by project in the platform
 usage dashboard because an application-level per-request ceiling is not a
