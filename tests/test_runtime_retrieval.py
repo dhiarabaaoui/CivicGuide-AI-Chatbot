@@ -5,13 +5,13 @@ import unittest
 import numpy as np
 
 from rag_runtime.retrieval import EvidenceIndex, HybridRetriever, tokenize
-from rag_runtime.settings import load_settings
+from rag_runtime.settings import PROJECT_ROOT, load_settings
 
 
 class RuntimeRetrievalTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.settings = load_settings()
+        cls.settings = load_settings(PROJECT_ROOT / "configs" / "runtime.vercel.json")
         cls.retriever = HybridRetriever(cls.settings)
         cls.evidence = EvidenceIndex(cls.settings.path("documents"))
 
