@@ -39,23 +39,12 @@ experimental and should be checked against the cited official source.*
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    U[User question + recent turns] --> R{Conversation router}
-    R -->|clarification| Q[Ask a focused follow-up]
-    R -->|insufficient evidence| A[Safe abstention]
-    R -->|answer| H[Hybrid retrieval]
-    H --> B[BM25]
-    H --> E[Dense embeddings]
-    B --> F[RRF fusion]
-    E --> F
-    F --> P[Atomic evidence planner]
-    P --> V[Plan reviewer]
-    V --> G[Grounded answer realizer]
-    G --> C{Contract + citation checks}
-    C -->|valid| O[Cited answer]
-    C -->|invalid| A
-```
+[![CivicGuide AI production architecture](docs/assets/architecture.svg)](docs/assets/architecture.svg)
+
+The online path separates conversation routing, retrieval, evidence planning,
+generation and validation. The delivery path independently verifies the same
+frozen artifacts in GitHub Actions and Docker before Vercel serves them, while
+health probes and privacy-safe logs observe the public runtime.
 
 RRF, or **Reciprocal Rank Fusion**, combines result rankings rather than raw
 scores. A passage receives a contribution close to `1 / (constant + rank)` from
@@ -102,6 +91,7 @@ app.py                Vercel/FastAPI entry point
 Dockerfile            non-root portable production image
 compose.yaml          hardened local container runtime
 OPERATIONS.md         monitoring, CI/CD, incident and rollback runbook
+CHANGELOG.md          portfolio release history and verified release evidence
 ```
 
 Historical prompt variants, rejected rerankers and redundant experiments were
@@ -243,6 +233,10 @@ vercel --prod
 See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for the complete deployment and
 post-deployment checklist. See [OPERATIONS.md](OPERATIONS.md) for CI/CD,
 monitoring, Docker, incident response and rollback operations.
+
+For a concise recruiter-oriented explanation of the problem, architecture,
+trade-offs and verified outcomes, see the
+[portfolio case study](docs/PORTFOLIO_CASE_STUDY.md).
 
 ## Responsible use
 

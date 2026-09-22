@@ -1,0 +1,235 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title description">
+  <title id="title">CivicGuide AI production architecture</title>
+  <desc id="description">Request flow from the browser through routing, hybrid retrieval, evidence planning, grounded generation, validation, and cited response, with production operations underneath.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f9fbff"/>
+      <stop offset="1" stop-color="#eef3ff"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f6df5"/>
+      <stop offset="1" stop-color="#7557e8"/>
+    </linearGradient>
+    <linearGradient id="retrieval" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eaf1ff"/>
+      <stop offset="1" stop-color="#f1edff"/>
+    </linearGradient>
+    <linearGradient id="generation" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eafaf7"/>
+      <stop offset="1" stop-color="#eef7ff"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 L 0 0 0 32" fill="none" stroke="#dce4f6" stroke-width="1" opacity="0.45"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#183153" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#68779a"/>
+    </marker>
+    <marker id="arrowBrand" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b6ff3"/>
+    </marker>
+    <style>
+      .title { font: 700 38px Inter, Segoe UI, Arial, sans-serif; fill: #172033; }
+      .subtitle { font: 400 18px Inter, Segoe UI, Arial, sans-serif; fill: #66728b; }
+      .section { font: 700 14px Inter, Segoe UI, Arial, sans-serif; letter-spacing: 1.8px; fill: #7c89a5; }
+      .node-title { font: 700 18px Inter, Segoe UI, Arial, sans-serif; fill: #202a3d; }
+      .node-copy { font: 400 14px Inter, Segoe UI, Arial, sans-serif; fill: #66728b; }
+      .small-title { font: 700 15px Inter, Segoe UI, Arial, sans-serif; fill: #202a3d; }
+      .small-copy { font: 400 12px Inter, Segoe UI, Arial, sans-serif; fill: #6d7890; }
+      .pill { font: 700 12px Inter, Segoe UI, Arial, sans-serif; fill: #5262d7; letter-spacing: .6px; }
+      .ops-title { font: 700 16px Inter, Segoe UI, Arial, sans-serif; fill: #ffffff; }
+      .ops-copy { font: 400 12px Inter, Segoe UI, Arial, sans-serif; fill: #dce3ff; }
+      .flow { stroke: #68779a; stroke-width: 2.4; fill: none; marker-end: url(#arrow); }
+      .flow-brand { stroke: #5b6ff3; stroke-width: 3; fill: none; marker-end: url(#arrowBrand); }
+      .dash { stroke: #a5b0c7; stroke-width: 2; stroke-dasharray: 7 7; fill: none; }
+    </style>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#background)"/>
+  <rect width="1600" height="900" fill="url(#grid)"/>
+
+  <g transform="translate(72 58)">
+    <rect width="54" height="54" rx="16" fill="url(#brand)" filter="url(#shadow)"/>
+    <path d="M16 17h22M16 27h22M16 37h14" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <text x="76" y="31" class="title">CivicGuide AI</text>
+    <text x="76" y="58" class="subtitle">Grounded public-service answers, engineered for traceability and safe delivery</text>
+  </g>
+
+  <g transform="translate(72 158)">
+    <text x="0" y="0" class="section">ONLINE REQUEST PATH</text>
+
+    <g transform="translate(0 34)" filter="url(#shadow)">
+      <rect width="218" height="126" rx="22" fill="#ffffff" stroke="#d7dff0"/>
+      <circle cx="43" cy="43" r="22" fill="#edf1ff"/>
+      <circle cx="43" cy="38" r="8" fill="none" stroke="#5b6ff3" stroke-width="3"/>
+      <path d="M26 61c5-12 29-12 34 0" fill="none" stroke="#5b6ff3" stroke-width="3" stroke-linecap="round"/>
+      <text x="78" y="41" class="node-title">User &amp; browser</text>
+      <text x="24" y="85" class="node-copy">Question, domain and</text>
+      <text x="24" y="106" class="node-copy">recent conversation turns</text>
+    </g>
+
+    <path d="M218 97 H278" class="flow-brand"/>
+
+    <g transform="translate(280 34)" filter="url(#shadow)">
+      <rect width="224" height="126" rx="22" fill="#ffffff" stroke="#d7dff0"/>
+      <rect x="22" y="20" width="54" height="42" rx="12" fill="#edf1ff"/>
+      <path d="M34 33h30M34 43h22M34 53h16" stroke="#5b6ff3" stroke-width="3" stroke-linecap="round"/>
+      <text x="90" y="42" class="node-title">FastAPI API</text>
+      <text x="22" y="85" class="node-copy">Input validation, request ID</text>
+      <text x="22" y="106" class="node-copy">and privacy-safe controls</text>
+    </g>
+
+    <path d="M504 97 H564" class="flow-brand"/>
+
+    <g transform="translate(566 34)" filter="url(#shadow)">
+      <rect width="238" height="126" rx="22" fill="#ffffff" stroke="#d7dff0"/>
+      <path d="M35 26l18 18-18 18-18-18z" fill="#f0edff" stroke="#7557e8" stroke-width="2"/>
+      <path d="M53 44h21M17 44H2" stroke="#7557e8" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="88" y="42" class="node-title">Conversation router</text>
+      <text x="22" y="85" class="node-copy">Answer, ask a clarification</text>
+      <text x="22" y="106" class="node-copy">or abstain safely</text>
+    </g>
+
+    <path d="M804 97 H864" class="flow-brand"/>
+
+    <g transform="translate(866 34)" filter="url(#shadow)">
+      <rect width="250" height="126" rx="22" fill="url(#retrieval)" stroke="#cdd8fb"/>
+      <circle cx="42" cy="42" r="23" fill="#ffffff"/>
+      <circle cx="39" cy="39" r="11" fill="none" stroke="#4f6df5" stroke-width="3"/>
+      <path d="M47 47l12 12" stroke="#4f6df5" stroke-width="4" stroke-linecap="round"/>
+      <text x="82" y="42" class="node-title">Hybrid retrieval</text>
+      <text x="22" y="85" class="node-copy">BM25 + dense embeddings</text>
+      <text x="22" y="106" class="node-copy">combined with RRF</text>
+    </g>
+
+    <path d="M1116 97 H1176" class="flow-brand"/>
+
+    <g transform="translate(1178 34)" filter="url(#shadow)">
+      <rect width="278" height="126" rx="22" fill="url(#generation)" stroke="#c9e7e0"/>
+      <rect x="22" y="20" width="48" height="48" rx="14" fill="#ffffff"/>
+      <path d="M34 34h24M34 44h18M34 54h22" stroke="#12a58b" stroke-width="3" stroke-linecap="round"/>
+      <text x="88" y="42" class="node-title">Grounded response</text>
+      <text x="22" y="85" class="node-copy">Validated answer with inline</text>
+      <text x="22" y="106" class="node-copy">citations and official links</text>
+    </g>
+
+    <path d="M1317 160 V196 H1098" class="flow"/>
+
+    <g transform="translate(520 212)">
+      <rect width="656" height="236" rx="28" fill="#ffffff" stroke="#d5deef" filter="url(#shadow)"/>
+      <text x="30" y="38" class="section">EVIDENCE-TO-ANSWER PIPELINE</text>
+
+      <g transform="translate(28 62)">
+        <rect width="178" height="126" rx="18" fill="#f5f7ff" stroke="#d8def8"/>
+        <text x="18" y="31" class="small-title">Atomic evidence</text>
+        <text x="18" y="57" class="small-copy">Traceable spans selected</text>
+        <text x="18" y="75" class="small-copy">from retrieved sections</text>
+        <rect x="18" y="94" width="77" height="22" rx="11" fill="#e7ebff"/>
+        <text x="29" y="109" class="pill">E1 · E2 · E3</text>
+      </g>
+
+      <path d="M206 125 H234" class="flow"/>
+
+      <g transform="translate(236 62)">
+        <rect width="178" height="126" rx="18" fill="#f7f4ff" stroke="#ded5f7"/>
+        <text x="18" y="31" class="small-title">Claim planner</text>
+        <text x="18" y="57" class="small-copy">Defines the facts needed</text>
+        <text x="18" y="75" class="small-copy">and their allowed evidence</text>
+        <text x="18" y="105" class="pill">VERSIONED PROMPT</text>
+      </g>
+
+      <path d="M414 125 H442" class="flow"/>
+
+      <g transform="translate(444 62)">
+        <rect width="184" height="126" rx="18" fill="#effaf7" stroke="#cfe8e2"/>
+        <text x="18" y="31" class="small-title">Validation gate</text>
+        <text x="18" y="57" class="small-copy">Checks contract, claims,</text>
+        <text x="18" y="75" class="small-copy">evidence IDs and citations</text>
+        <rect x="18" y="93" width="88" height="24" rx="12" fill="#dff5ef"/>
+        <text x="31" y="109" class="pill" fill="#148c77">PASS / ABSTAIN</text>
+      </g>
+    </g>
+
+    <g transform="translate(0 232)" filter="url(#shadow)">
+      <rect width="426" height="196" rx="26" fill="#ffffff" stroke="#d7dff0"/>
+      <text x="28" y="40" class="section">TRUST BOUNDARY</text>
+      <text x="28" y="76" class="node-title">Official source corpus</text>
+      <text x="28" y="104" class="node-copy">DMV · Social Security · Veterans Affairs</text>
+      <text x="28" y="127" class="node-copy">Federal Student Aid</text>
+      <rect x="28" y="148" width="152" height="28" rx="14" fill="#eef2ff"/>
+      <text x="45" y="167" class="pill">1,273 FROZEN CHUNKS</text>
+      <rect x="191" y="148" width="142" height="28" rx="14" fill="#eef9f6"/>
+      <text x="207" y="167" class="pill" fill="#138d78">SHA-256 VERIFIED</text>
+    </g>
+
+    <path d="M426 330 H492 V337 H520" class="dash"/>
+
+    <g transform="translate(0 494)">
+      <rect width="1456" height="150" rx="28" fill="#202a46" filter="url(#shadow)"/>
+      <text x="28" y="35" class="section" fill="#aeb9dc">PRODUCTION DELIVERY &amp; OPERATIONS</text>
+
+      <g transform="translate(28 58)">
+        <rect width="250" height="66" rx="17" fill="#2b3657" stroke="#465579"/>
+        <circle cx="34" cy="33" r="15" fill="#4f6df5"/>
+        <path d="M28 33l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="60" y="28" class="ops-title">GitHub CI</text>
+        <text x="60" y="48" class="ops-copy">59 tests · audit · artifacts</text>
+      </g>
+
+      <path d="M278 91 H304" class="flow"/>
+
+      <g transform="translate(306 58)">
+        <rect width="250" height="66" rx="17" fill="#2b3657" stroke="#465579"/>
+        <rect x="20" y="18" width="30" height="30" rx="8" fill="#7557e8"/>
+        <path d="M27 27h16v12H27z" fill="none" stroke="#fff" stroke-width="2"/>
+        <text x="64" y="28" class="ops-title">Hardened Docker</text>
+        <text x="64" y="48" class="ops-copy">non-root · read-only · healthy</text>
+      </g>
+
+      <path d="M556 91 H582" class="flow"/>
+
+      <g transform="translate(584 58)">
+        <rect width="250" height="66" rx="17" fill="#2b3657" stroke="#465579"/>
+        <path d="M22 44l16-27 16 27z" fill="#ffffff"/>
+        <text x="68" y="28" class="ops-title">Vercel CD</text>
+        <text x="68" y="48" class="ops-copy">Preview · production · rollback</text>
+      </g>
+
+      <path d="M834 91 H860" class="flow"/>
+
+      <g transform="translate(862 58)">
+        <rect width="270" height="66" rx="17" fill="#2b3657" stroke="#465579"/>
+        <path d="M22 38h8l5-16 7 25 6-14h11" fill="none" stroke="#2bd5b5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="72" y="28" class="ops-title">Observability</text>
+        <text x="72" y="48" class="ops-copy">JSON logs · traces · uptime</text>
+      </g>
+
+      <g transform="translate(1154 58)">
+        <rect width="274" height="66" rx="17" fill="#2b3657" stroke="#465579"/>
+        <path d="M34 17l15 6v12c0 10-7 16-15 20-8-4-15-10-15-20V23z" fill="#4f6df5"/>
+        <path d="M27 35l5 5 9-11" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="68" y="28" class="ops-title">Safety controls</text>
+        <text x="68" y="48" class="ops-copy">rate limit · headers · cost cap</text>
+      </g>
+    </g>
+
+    <g transform="translate(0 678)">
+      <rect width="1456" height="54" rx="18" fill="#ffffff" stroke="#d9e1f1"/>
+      <circle cx="29" cy="27" r="8" fill="#18a78c"/>
+      <text x="49" y="33" class="small-title">Verified snapshot</text>
+      <text x="205" y="33" class="node-copy">CI green</text>
+      <text x="298" y="33" class="node-copy">·</text>
+      <text x="323" y="33" class="node-copy">Docker healthy</text>
+      <text x="458" y="33" class="node-copy">·</text>
+      <text x="483" y="33" class="node-copy">0 known dependency vulnerabilities</text>
+      <text x="760" y="33" class="node-copy">·</text>
+      <text x="785" y="33" class="node-copy">p95 376 ms</text>
+      <text x="891" y="33" class="node-copy">·</text>
+      <text x="916" y="33" class="node-copy">Production readiness monitored</text>
+      <rect x="1249" y="13" width="182" height="28" rx="14" fill="#fff3e9"/>
+      <text x="1265" y="32" class="pill" fill="#bd6b24">EXPERIMENTAL QUALITY</text>
+    </g>
+  </g>
+</svg>
