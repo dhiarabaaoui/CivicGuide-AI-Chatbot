@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "grounded_generation_pilot_v1",
+  "implementation_version": "0.1.0",
+  "dataset_version": "multidoc2dial_v1",
+  "evaluation_split": "validation",
+  "locked_splits": [
+    "test"
+  ],
+  "cohort": "direct_user_response",
+  "chunking_experiment_id": "chunking_candidates_v0_b1ac9cc451",
+  "chunking_strategy": "section_preserving_v1",
+  "context_variants": [
+    {
+      "name": "compact_5k",
+      "experiment_id": "context_builder_v1_860d7c5b2f",
+      "role": "production_candidate"
+    },
+    {
+      "name": "extended_8k",
+      "experiment_id": "context_builder_v1_c76df0c43c",
+      "role": "coverage_challenger"
+    }
+  ],
+  "pilot": {
+    "sample_size": 200,
+    "samples_per_domain": 50,
+    "minimum_compact_evidence_absent_per_domain": 10,
+    "selection": "stable_hash_stratified_domain_and_compact_evidence",
+    "random_seed": 42
+  },
+  "history": {
+    "maximum_turns": 8,
+    "maximum_tokens": 800,
+    "token_encoding": "cl100k_base"
+  },
+  "generator": {
+    "provider": "openai",
+    "api": "responses",
+    "model": "gpt-5.4-mini-2026-03-17",
+    "model_alias": "gpt-5.4-mini",
+    "prompt_version": "grounded_cited_answer_v1",
+    "reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 1536,
+    "store": false,
+    "request_timeout_seconds": 180,
+    "max_retries": 6,
+    "initial_backoff_seconds": 1.0,
+    "maximum_backoff_seconds": 30.0,
+    "concurrency": 4,
+    "tokens_per_minute_limit": 200000,
+    "rate_limit_utilization": 0.75,
+    "minimum_rate_limit_cooldown_seconds": 5.0,
+    "cache_sqlite_filename": "openai_grounded_generations.sqlite3",
+    "api_key_environment_variable": "OPENAI_API_KEY",
+    "dotenv_path": ".env"
+  },
+  "response_contract": {
+    "schema_name": "grounded_cited_answer",
+    "maximum_answer_characters": 3000,
+    "maximum_used_sources": 20,
+    "inline_citation_regex": "\\[(S[1-9][0-9]*)\\]"
+  },
+  "pricing": {
+    "pricing_as_of": "2026-08-23",
+    "official_model_source": "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+    "input_usd_per_million_tokens": 0.75,
+    "cached_input_usd_per_million_tokens": 0.075,
+    "output_usd_per_million_tokens": 4.5,
+    "maximum_estimated_new_cost_usd": 5.0
+  },
+  "evaluation": {
+    "primary_operational_metric": "valid_grounded_contract_rate",
+    "report_slices": [
+      "all_pilot",
+      "compact_evidence_present",
+      "compact_evidence_absent",
+      "rewrite_gated",
+      "rewrite_not_gated",
+      "short_queries",
+      "non_short_queries"
+    ]
+  },
+  "quality_targets": {
+    "minimum_cache_or_api_completion_rate": 1.0,
+    "minimum_json_schema_valid_rate": 1.0,
+    "minimum_valid_source_id_rate": 0.99,
+    "minimum_inline_used_source_match_rate": 0.95,
+    "maximum_test_records_loaded": 0
+  }
+}

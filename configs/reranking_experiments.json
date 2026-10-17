@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "cross_encoder_reranking_v1",
+  "implementation_version": "0.1.0",
+  "benchmark_id": "multidoc2dial_retrieval_benchmark_v1_e8baf6e2ad",
+  "query_rewriting_experiment_id": "conditional_query_rewriting_v1_fbc3ec59f5",
+  "chunking_experiment_id": "chunking_candidates_v0_b1ac9cc451",
+  "strategy": "section_preserving_v1",
+  "evaluation_split": "validation",
+  "locked_splits": [
+    "test"
+  ],
+  "cohort": "direct_user_response",
+  "candidate_depth": 50,
+  "persisted_depth": 50,
+  "query_representation": {
+    "mode": "conditional_rewrite",
+    "source": "validation_rewrites.jsonl",
+    "rule": "rewritten_query_if_gated_else_original_query"
+  },
+  "passage_representation": {
+    "version": "tokenizer_aware_overlapping_windows_v1",
+    "template": "Document: {document_title}\n{window}",
+    "windowing": {
+      "enabled": true,
+      "overlap_tokens": 64,
+      "safety_margin_tokens": 4,
+      "aggregation": "maximum_logit",
+      "minimum_content_budget_tokens": 128
+    }
+  },
+  "model": {
+    "provider": "huggingface",
+    "model_id": "cross-encoder/ms-marco-MiniLM-L2-v2",
+    "revision": "1b5cd67b15209f24824c50370e0397743aa9b787",
+    "license": "apache-2.0",
+    "trust_remote_code": false,
+    "use_safetensors": true,
+    "max_length": 512,
+    "truncation": "only_second",
+    "device": "auto",
+    "cuda_dtype": "float16",
+    "cpu_dtype": "float32",
+    "initial_batch_size_cuda": 32,
+    "initial_batch_size_cpu": 8,
+    "minimum_batch_size": 1,
+    "oom_batch_reduction_factor": 2,
+    "cache_sqlite_filename": "cross_encoder_pair_scores.sqlite3",
+    "cache_commit_every_pairs": 2048,
+    "progress_every_batches": 100
+  },
+  "runtime_benchmark": {
+    "query_sample_size": 50,
+    "selection": "lowest_stable_hash",
+    "warmup_queries": 2
+  },
+  "reranker_fusion": {
+    "method": "weighted_reciprocal_rank_fusion",
+    "rerank_depth_values": [
+      10,
+      20,
+      30,
+      50
+    ],
+    "rank_constant_values": [
+      10,
+      60
+    ],
+    "reranker_weight_values": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.33,
+      0.5,
+      0.67,
+      0.75
+    ],
+    "retrieval_weight_rule": "one_minus_reranker_weight"
+  },
+  "evaluation": {
+    "top_k_values": [
+      1,
+      3,
+      5,
+      10,
+      20,
+      50
+    ],
+    "mrr_cutoff": 10,
+    "ndcg_cutoffs": [
+      5,
+      10
+    ],
+    "primary_metric": "evidence_recall@5",
+    "minimum_primary_gain_for_acceptance": 0.005,
+    "require_non_negative_mrr_gain": true,
+    "baseline_parity_tolerance": 0.0001,
+    "report_slices": [
+      "all_primary",
+      "rewrite_gated",
+      "rewrite_not_gated",
+      "short_queries",
+      "non_short_queries",
+      "response_acts",
+      "overlap_free"
+    ]
+  },
+  "quality_targets": {
+    "minimum_score_coverage": 1.0,
+    "candidate_recall_at_50_minimum": 0.94,
+    "maximum_candidate_recall_at_50_drift": 1e-12,
+    "multi_window_candidate_fraction_warning_above": 0.5,
+    "query_latency_p95_warning_ms": 1500.0
+  },
+  "random_seed": 42,
+  "model_selection_rationale": {
+    "measured_device": "NVIDIA GeForce GTX 1650 4 GB",
+    "active_model_measured_pairs_per_second": 61.69,
+    "active_model_estimated_full_minutes": 99.4,
+    "deferred_models": [
+      {
+        "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+        "measured_pairs_per_second": 24.14,
+        "estimated_full_minutes": 254.1,
+        "reason": "2.55x slower on the available GPU; evaluate only if L2 fails the quality acceptance gate."
+      },
+      {
+        "model_id": "BAAI/bge-reranker-v2-m3",
+        "recommended_max_length": 1024,
+        "reason": "Long-context 568M-parameter challenger deferred until the fast production baseline is measured."
+      }
+    ]
+  }
+}

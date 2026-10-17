@@ -144,7 +144,7 @@ Le 13 septembre 2026, le propriétaire a décidé de ne plus consacrer de temps 
 
 ## Étape 35 — Simplification et archivage des boucles expérimentales
 
-Le 13 septembre 2026, le projet actif a été réduit pour éviter que les nombreuses itérations de recherche masquent le chemin finalement retenu. Les 21 prompts ont été ramenés aux trois composants actifs du pipeline : le **planner** choisit les affirmations et leurs preuves, le **reviewer** contrôle ce plan, puis le **realizer** rédige uniquement les affirmations autorisées. Les 20 notebooks ont été ramenés à huit notebooks structurants et une seule version des principaux artefacts de recherche a été conservée. Le modèle de reranking rejeté, ses caches, les anciens canaris de prompts, les contrôleurs alternatifs et leurs résultats détaillés ont quitté le dossier actif. Au total, 329 éléments représentant 2 523,90 Mo ont été déplacés dans une archive sœur récupérable, décrite dans `CLEANUP_PROJECT.md`. Les boucles de sûreté du pipeline actif n’ont pas été retirées : seules les boucles historiques d’expérimentation ont été écartées.
+Le 13 septembre 2026, le projet actif a été réduit pour éviter que les nombreuses itérations de recherche masquent le chemin finalement retenu. Les 21 prompts ont été ramenés aux trois composants actifs du pipeline : le **planner** choisit les affirmations et leurs preuves, le **reviewer** contrôle ce plan, puis le **realizer** rédige uniquement les affirmations autorisées. Les 20 notebooks ont initialement été ramenés à huit et une seule version des principaux artefacts volumineux a été conservée. Le 17 octobre 2026, un audit de conservation a montré que cette règle avait aussi retiré neuf notebooks qui produisaient des entrées consommées plus tard, documentaient un gain mesuré ou expliquaient une décision structurante. Les notebooks 04, 05, 07, 08, 08b, 10, 11, 13 et 14 ainsi que leurs configurations légères ont donc été restaurés. Les notebooks 15 et 16 restent archivés parce qu'ils répètent l'optimisation sur des échecs déjà connus sans franchir les gates, et le notebook 17 reste archivé parce que son resolver a échoué à ses gates d'intégration. Les poids de modèles, caches et sorties volumineuses restent dans l'archive sœur décrite dans `CLEANUP_PROJECT.md`. Les boucles de sûreté du pipeline actif n’ont pas été retirées.
 
 ## Étape 36 — Premier runtime backend utilisable
 
@@ -176,7 +176,7 @@ Le 21 septembre 2026, une phase d’industrialisation a transformé le déploiem
 
 ## Repères pour reprendre le projet
 
-- **Huit notebooks retenus :** `notebooks/` contient uniquement les étapes structurantes 01, 02, 03, 06, 09, 12, 18 et 19.
+- **Dix-sept notebooks retenus :** `notebooks/` conserve les étapes structurantes, leurs baselines, les améliorations mesurées et les décisions nécessaires pour comprendre la chaîne finale. La règle détaillée se trouve dans `docs/NOTEBOOK_RETENTION.md` ; seuls les notebooks 15, 16 et 17 restent exclusivement dans l'archive.
 - **Données préparées :** `data/processed/multidoc2dial_v1/` contient corpus canonique, chunks, benchmarks, caches structurés, freezes et packs de validation.
 - **Rapports retenus :** `reports/generated/multidoc2dial_v1/` contient les métriques du chemin final, les décisions, les audits et la validation externe ; les rapports des branches rejetées sont dans l’archive.
 - **Configuration active :** `configs/` contient notamment les seuils, budgets et feature flags ; ils doivent rester désactivés tant que la validation externe n’a pas réussi.
