@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "experiment_name": "answer_quality_evaluation_v1",
+  "implementation_version": "0.2.0",
+  "dataset_version": "multidoc2dial_v1",
+  "evaluation_split": "validation",
+  "locked_splits": [
+    "test"
+  ],
+  "cohort": "direct_user_response",
+  "source_generation_experiment_id": "grounded_generation_pilot_v1_6332f514bc",
+  "benchmark_experiment_id": "multidoc2dial_retrieval_benchmark_v1_436058d087",
+  "chunking_experiment_id": "chunking_candidates_v0_b1ac9cc451",
+  "chunking_strategy": "section_preserving_v1",
+  "context_variants": [
+    {
+      "name": "compact_5k",
+      "experiment_id": "context_builder_v1_860d7c5b2f"
+    },
+    {
+      "name": "extended_8k",
+      "experiment_id": "context_builder_v1_c76df0c43c"
+    }
+  ],
+  "judge": {
+    "provider": "openai",
+    "api": "responses",
+    "model": "gpt-5.6-sol",
+    "model_alias": "gpt-5.6",
+    "prompt_version": "rag_quality_judge_v1",
+    "reasoning_effort": "medium",
+    "position_audit_reasoning_effort": "low",
+    "text_verbosity": "low",
+    "max_output_tokens": 4096,
+    "position_audit_max_output_tokens": 1024,
+    "store": false,
+    "request_timeout_seconds": 240,
+    "max_retries": 6,
+    "initial_backoff_seconds": 1.0,
+    "maximum_backoff_seconds": 30.0,
+    "concurrency": 4,
+    "tokens_per_minute_limit": 200000,
+    "rate_limit_utilization": 0.7,
+    "minimum_rate_limit_cooldown_seconds": 5.0,
+    "token_encoding": "cl100k_base",
+    "cache_sqlite_filename": "openai_rag_quality_judgments.sqlite3",
+    "api_key_environment_variable": "OPENAI_API_KEY",
+    "dotenv_path": ".env"
+  },
+  "position_bias_audit": {
+    "sample_size": 40,
+    "samples_per_domain": 10,
+    "selection": "stable_hash_stratified_domain",
+    "selection_salt": "position_bias_audit_v1"
+  },
+  "human_calibration": {
+    "sample_size": 40,
+    "samples_per_domain": 10,
+    "selection": "stable_hash_stratified_domain",
+    "selection_salt": "human_calibration_v1",
+    "minimum_completed_pairwise_labels": 40,
+    "minimum_completed_faithfulness_labels": 80,
+    "minimum_completed_correctness_labels": 80,
+    "minimum_pairwise_agreement": 0.7,
+    "minimum_faithfulness_agreement": 0.75,
+    "maximum_correctness_mae": 1.0
+  },
+  "bootstrap": {
+    "resamples": 5000,
+    "confidence_level": 0.95,
+    "random_seed": 42
+  },
+  "pricing": {
+    "pricing_as_of": "2026-08-23",
+    "official_model_source": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+    "input_usd_per_million_tokens": 4.0,
+    "cached_input_usd_per_million_tokens": 0.4,
+    "output_usd_per_million_tokens": 20.0,
+    "maximum_estimated_new_cost_usd": 40.0
+  },
+  "quality_targets": {
+    "minimum_judge_completion_rate": 1.0,
+    "minimum_json_schema_valid_rate": 1.0,
+    "maximum_invalid_judge_source_ids": 0,
+    "maximum_pairwise_order_inconsistency_warning_rate": 0.2,
+    "maximum_direct_winner_reversal_rate": 0.15,
+    "maximum_test_records_loaded": 0
+  },
+  "production_gates": {
+    "minimum_overall_pass_rate": 0.8,
+    "minimum_faithfulness_pass_rate": 0.95,
+    "minimum_citation_correctness_pass_rate": 0.95,
+    "maximum_hallucination_rate": 0.05,
+    "minimum_material_improvement": 0.02
+  }
+}

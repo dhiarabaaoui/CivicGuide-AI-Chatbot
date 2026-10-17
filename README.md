@@ -80,7 +80,7 @@ service. Full context is recorded in [MODEL_CARD.md](MODEL_CARD.md).
 apps/                 FastAPI runtime and internal annotation utilities
 configs/              retrieval, generation, runtime and release settings
 frontend/             responsive HTML/CSS/JavaScript chat interface
-notebooks/            eight retained research and evaluation notebooks
+notebooks/            seventeen retained research and evaluation notebooks
 prompts/              the three active planner/reviewer/realizer prompts
 rag_runtime/          retrieval, generation, validation and service code
 runtime_artifacts/    frozen chunks, documents, vectors and searchable index
@@ -94,9 +94,13 @@ OPERATIONS.md         monitoring, CI/CD, incident and rollback runbook
 CHANGELOG.md          portfolio release history and verified release evidence
 ```
 
-Historical prompt variants, rejected rerankers and redundant experiments were
-removed from the active project. The retained path and cleanup rationale are
-documented in [GUIDE_MEMOIRE_PROJET.md](GUIDE_MEMOIRE_PROJET.md) and
+Large caches, obsolete prompt variants and repeated failure-targeted loops were
+removed from the active project. Notebooks that produced a measured gain,
+introduced a retained design decision or are required to understand a later
+stage remain visible, including negative results that explain why a component
+was not deployed. The retention policy is documented in
+[docs/NOTEBOOK_RETENTION.md](docs/NOTEBOOK_RETENTION.md), with the full project
+history in [GUIDE_MEMOIRE_PROJET.md](GUIDE_MEMOIRE_PROJET.md) and
 [CLEANUP_PROJECT.md](CLEANUP_PROJECT.md).
 
 ## Run locally
@@ -188,16 +192,22 @@ available with `python scripts/load_test.py`; it does not call OpenAI.
 
 ## Reproduce the research path
 
-The public repository keeps only the notebooks that explain the selected path:
+The public repository keeps the notebooks needed to explain both the selected
+path and the measured decisions that led to it:
 
 1. data analysis and validation;
 2. structure-aware document chunking;
 3. retrieval benchmark construction;
-4. hybrid BM25 + dense retrieval with RRF;
-5. traceable context construction;
-6. error analysis and adjudication;
-7. pre-production routing readiness;
-8. automated end-to-end evaluation.
+4. BM25 and dense retrieval baselines;
+5. hybrid BM25 + dense retrieval with RRF;
+6. conditional query rewriting;
+7. L2 and L6 cross-encoder reranking comparisons;
+8. traceable context construction;
+9. grounded-generation pilot and paired answer-quality evaluation;
+10. error analysis and adjudication;
+11. atomic-claim prompt v2 generation and quality canary;
+12. pre-production routing readiness;
+13. automated end-to-end evaluation.
 
 Generated datasets, caches and reports are intentionally excluded from Git.
 Dataset provenance and citation information are in [DATA_CARD.md](DATA_CARD.md).
